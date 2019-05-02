@@ -5,15 +5,15 @@
 import serial
 import time
 import os
-import sys
 from tkinter import filedialog, Tk
+import sys
 
-ser =  serial.Serial("COM3", 115200) #Make sure you change the COM port to whatever it is on your setup.
+ser =  serial.Serial("/dev/ttyS3", 115200) #Make sure you change the COM port to whatever it is on your setup.
 
-root = Tk()
-root.withdraw()
+#root = Tk()
+#root.withdraw()
 
-tasFilePath = filedialog.askopenfilename(filetypes = [('Lag-Stripped TAS File', '.tas'), ('All files','.*')])
+tasFilePath = sys.argv[1] #filedialog.askopenfilename(filetypes = [('Lag-Stripped TAS File', '.tas'), ('All files','.*')])
 
 tasFile = open(tasFilePath,'rb')
 tasFileSize = int((os.stat(tasFilePath).st_size)/2) #gets the file size, divided by 2 for 2 input per frame.
@@ -24,11 +24,12 @@ ser.write([0x10])
 print('Ready...')
 
 def main():
+	if(len(sys.argv)>=3) : 
+		for i in range(sys.argv[2]):
+			ser.write([0x00])
+			ser.write([0x00])
 	amountRead = 0
 	endOfFile = False
-	for i in range(int(sys.argv[1])):
-		ser.write([0x00])
-		ser.write([0x00]) 
 	while 1:
 		#os.system("title " + ('Frame Counter: ' + str(amountRead) + '/' + str(tasFileSize))) #This is just pretty. But it seems to cause desyncs if it's active, uncomment at your own risk.
 		
